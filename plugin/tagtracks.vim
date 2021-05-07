@@ -33,6 +33,7 @@ function StartTagTracks()
   setlocal bufhidden=wipe
   setlocal noswapfile
   setlocal nobuflisted
+  file TagTracks
   " window id where display will live
   const display_id = win_getid()
 
