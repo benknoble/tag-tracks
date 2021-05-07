@@ -6,7 +6,8 @@ let g:loaded_tagtracks = 1
 function DisplayTagTracks(display_id, tagtracks_id, timer)
   const [display_tabnr, display_winnr] = win_id2tabwin(a:display_id)
   " don't update when not in the right tab
-  if tabpagenr() isnot# display_tabnr
+  " or when the display cannot be found
+  if tabpagenr() isnot# display_tabnr || display_winnr is# 0
     return
   endif
 
