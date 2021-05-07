@@ -20,7 +20,7 @@ function DisplayTagTracks(display_id, tagtracks_id, timer)
   " delete old content, like %delete
   silent call deletebufline(display_bufnr, 1, '$')
   " add the new content, like put =tagsitems | 1delete
-  call appendbufline(display_bufnr, 0, tagsitems)
+  call setbufline(display_bufnr, 1, tagsitems)
 endfunction
 
 function StartTagTracks()
