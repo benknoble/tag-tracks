@@ -4,6 +4,11 @@ endif
 let g:loaded_tagtracks = 1
 
 function DisplayTagTracks(display_id, tagtracks_id, timer)
+  if state() isnot# 'c'
+    " wait until not busy…
+    " 'c' for only executing this callback
+    return
+  endif
   const [display_tabnr, display_winnr] = win_id2tabwin(a:display_id)
   " don't update when not in the right tab
   " or when the display cannot be found
