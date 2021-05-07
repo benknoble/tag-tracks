@@ -36,11 +36,11 @@ function StartTagTracks()
   " window id where display will live
   const display_id = win_getid()
 
+  wincmd p
   let w:tagtracks_info = #{
         \ timer: timer_start(500, function('DisplayTagTracks', [display_id, tagtracks_id]), #{repeat: -1}),
         \ display_id: display_id
         \ }
-  wincmd p
 endfunction
 
 function StopTagTracks()
