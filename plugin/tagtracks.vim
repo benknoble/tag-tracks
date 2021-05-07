@@ -30,7 +30,7 @@ function StartTagTracks()
   const tagtracks_id = win_getid()
   new
   setlocal buftype=nofile
-  setlocal bufhidden=hide
+  setlocal bufhidden=wipe
   setlocal noswapfile
   setlocal nobuflisted
   " window id where display will live
