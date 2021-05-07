@@ -18,7 +18,7 @@ function DisplayTagTracks(display_id, tagtracks_id, timer)
   const display_bufnr = winbufnr(display_winnr)
 
   " delete old content, like %delete
-  silent call deletebufline(display_bufnr, 1, "$")
+  silent call deletebufline(display_bufnr, 1, '$')
   " add the new content, like put =tagsitems | 1delete
   call appendbufline(display_bufnr, 0, tagsitems)
 endfunction
