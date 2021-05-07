@@ -46,7 +46,10 @@ endfunction
 function StopTagTracks()
   if exists('w:tagtracks_info')
     call timer_stop(w:tracks_info.timer)
-    execute win_id2win(w:tracks_info.display_id) 'close'
+    const win_nr_to_close = win_id2win(w:tracks_info.display_id)
+    if win_nr_to_close isnot# 0
+      execute win_nr_to_close 'close'
+    endif
     unlet w:tracks_info
   endif
 endfunction
