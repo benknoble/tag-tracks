@@ -7,7 +7,6 @@ function FormatTagItem(index, item) abort
   const item_nr = a:index + 1
   const tagname = a:item.tagname
   const match = a:item.matchnr
-  const filename = bufname(a:item.bufnr)
   const original_loc = printf('%s:%d: %s',
         \ bufname(a:item.from[0]),
         \ a:item.from[1],
@@ -15,7 +14,6 @@ function FormatTagItem(index, item) abort
   return #{item: item_nr,
         \ tag: tagname,
         \ match: match,
-        \ file: filename,
         \ origin: original_loc}
 endfunction
 
@@ -25,20 +23,17 @@ function FormatTagStack(tags) abort
   const item_length = max([strlen('Item')] + mapnew(lines, {_, v -> strlen(v.item)})) + 1
   const tag_length = max([strlen('Tag')] + mapnew(lines, {_, v -> strlen(v.tag)})) + 1
   const match_length = max([strlen('Match')] + mapnew(lines, {_, v -> strlen(v.match)})) + 1
-  const file_length = max([strlen('File')] + mapnew(lines, {_, v -> strlen(v.file)})) + 1
 
   return [  ' ' .
         \   'Item' . repeat(' ', item_length - strlen('Item')) .
         \   'Tag' . repeat(' ', tag_length - strlen('Tag')) .
         \   'Match' . repeat(' ', match_length - strlen('Match')) .
-        \   'File' . repeat(' ', file_length - strlen('File')) .
         \   'Origin']
-        \ + mapnew(lines, {k, v -> printf('%s%s%s%s%s%s',
+        \ + mapnew(lines, {k, v -> printf('%s%s%s%s%s',
         \   (k is# a:tags.curidx - 1) ? '>' : ' ',
         \   v.item . repeat(' ', item_length - strlen(v.item)),
         \   v.tag . repeat(' ', tag_length - strlen(v.tag)),
         \   v.match . repeat(' ', match_length - strlen(v.match)),
-        \   v.file . repeat(' ', file_length - strlen(v.file)),
         \   v.origin)})
         \ + [(a:tags.curidx > a:tags.length) ? '>' : '']
 endfunction
