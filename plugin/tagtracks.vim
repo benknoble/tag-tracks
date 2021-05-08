@@ -43,12 +43,10 @@ function FormatTagStack(tags) abort
         \ + [(a:tags.curidx > a:tags.length) ? '>' : '']
 endfunction
 
-function DisplayTagTracks(display_id, tagtracks_id, timer)
-  if state() isnot# 'c'
-    " wait until not busy…
-    " 'c' for only executing this callback
-    return
-  endif
+function DisplayTagTracks(display_id, tagtracks_id)
+  " delete SafeState autocommand
+  silent! execute 'autocmd! tag_tracks'.a:tagtracks_id 'SafeState *'
+
   const [display_tabnr, display_winnr] = win_id2tabwin(a:display_id)
   " don't update when not in the right tab
   " or when the display cannot be found
@@ -70,6 +68,13 @@ function DisplayTagTracks(display_id, tagtracks_id, timer)
   call setbufline(display_bufnr, 1, tagsitems)
 endfunction
 
+function DisplayTagTracksSafely(display_id, tagtracks_id, timer) abort
+  execute 'augroup tag_tracks'.a:tagtracks_id
+    autocmd!
+    execute "autocmd SafeState * if mode() is# 'n' | call DisplayTagTracks(".a:display_id.", ".a:tagtracks_id.") | endif"
+  augroup end
+endfunction
+
 function StartTagTracks()
   if exists('w:tagtracks_info')
     return
@@ -86,9 +91,12 @@ function StartTagTracks()
   const display_id = win_getid()
 
   wincmd p
+  " trigger first display manually so we don't wait for too long
+  call DisplayTagTracks(display_id, tagtracks_id)
   let w:tagtracks_info = #{
-        \ timer: timer_start(500, function('DisplayTagTracks', [display_id, tagtracks_id]), #{repeat: -1}),
-        \ display_id: display_id
+        \ timer: timer_start(500, function('DisplayTagTracksSafely', [display_id, tagtracks_id]), #{repeat: -1}),
+        \ display_id: display_id,
+        \ tagtracks_id: tagtracks_id
         \ }
 endfunction
 
@@ -99,6 +107,7 @@ function StopTagTracks()
     if win_nr_to_close isnot# 0
       execute win_nr_to_close 'close'
     endif
+    silent! execute 'autocmd! tag_tracks'.w:tagtracks_info.tagtracks_id 'SafeState *'
     unlet w:tagtracks_info
   endif
 endfunction
