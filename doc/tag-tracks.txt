@@ -1,0 +1,61 @@
+*tag-tracks.txt*       For Vim version 8.0+        Last change: 2020 June 21
+*tag-tracks*
+
+              _                    _                  _        ~
+             | |_ __ _  __ _      | |_ _ __ __ _  ___| | _____ ~
+             | __/ _` |/ _` |_____| __| '__/ _` |/ __| |/ / __|~
+             | || (_| | (_| |_____| |_| | | (_| | (__|   <\__ \~
+              \__\__,_|\__, |      \__|_|  \__,_|\___|_|\_\___/~
+                       |___/                                   ~
+
+==============================================================================
+
+INTRO                                                         *tag-tracks-intro*
+
+tag-tracks provides a HUD for |:tags| for a particular window, making it
+easier to trace your steps through a code-base.
+
+==============================================================================
+
+USAGE                                                         *tag-tracks-usage*
+
+Install it with your favorite plugin manager and then use |:TagTracks| to go!
+
+*:TagTracks*    Toggle tag-tracking on and off. Opens a split window with the
+              tag stack on display.
+
+==============================================================================
+
+LICENSE                                                     *tag-tracks-license*
+
+BSD 3-Clause License. Copyright © 2020 D. Ben Knoble
+Full text available at
+https://github.com/benknoble/tag-tracks/blob/master/LICENSE
+
+BUGS                                                           *tag-tracks-bugs*
+
+At the time of this writing, no major bugs have been found.
+
+If you find one and wish to report it, you can do so at
+https://github.com/benknoble/tag-tracks/issues
+
+CONTRIBUTING                                           *tag-tracks-contributing*
+
+Want to submit a new feature, bugfix, or hack on tag-tracks?
+Submit pull requests to
+https://github.com/benknoble/tag-tracks/pulls
+
+Existing code determines style guidelines.
+
+CREDITS                                                     *tag-tracks-credits*
+
+Maintained by:
+- D. Ben Knoble (https://github.com/benkoble)
+
+Git repository:
+https://github.com/benknoble/tag-tracks
+
+Thanks to:
+https://vi.stackexchange.com/q/30922/10604
+
+vim:tw=78:ts=8:ft=help:norl:
