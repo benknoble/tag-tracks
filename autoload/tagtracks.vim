@@ -88,6 +88,9 @@ function tagtracks#StartTagTracks()
         \ display_id: display_id,
         \ tagtracks_id: tagtracks_id
         \ }
+
+  " stop TagTracks on :quit
+  autocmd QuitPre * call tagtracks#StopTagTracks()
 endfunction
 
 function tagtracks#StopTagTracks()
