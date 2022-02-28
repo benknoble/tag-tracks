@@ -2,10 +2,18 @@ function tagtracks#FormatTagItem(index, item) abort
   const item_nr = a:index + 1
   const tagname = a:item.tagname
   const match = a:item.matchnr
-  const original_loc = printf('%s:%d: %s',
+
+  " getbufline() returns an empty List if the buffer passed is not loaded.
+  " So, if the file corresponding to a TagStack entry is not open, then that
+  " entry's FROM expression will not be displayed. This limitation is present
+  " in the native `:tags' command as well.
+  const text_list = getbufline(a:item.from[0], a:item.from[1])
+  const text = empty(text_list) ? '' : text_list[0]
+
+  const original_loc = printf('%s:%d %s',
         \ bufname(a:item.from[0]),
         \ a:item.from[1],
-        \ getbufline(a:item.from[0], a:item.from[1])[0])
+        \ text)
   return #{item: item_nr,
         \ tag: tagname,
         \ match: match,
@@ -72,6 +80,7 @@ function tagtracks#StartTagTracks()
   " window id whose tagstack we want to display
   const tagtracks_id = win_getid()
   new
+  setlocal nonumber
   setlocal buftype=nofile
   setlocal bufhidden=wipe
   setlocal noswapfile
