@@ -72,6 +72,7 @@ function tagtracks#StartTagTracks()
   " window id whose tagstack we want to display
   const tagtracks_id = win_getid()
   new
+  setlocal nonumber
   setlocal buftype=nofile
   setlocal bufhidden=wipe
   setlocal noswapfile
