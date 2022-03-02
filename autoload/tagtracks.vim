@@ -85,6 +85,7 @@ function tagtracks#StartTagTracks()
   const tagtracks_id = win_getid()
   new
   setlocal nonumber
+  setlocal nowrap
   setlocal buftype=nofile
   setlocal bufhidden=wipe
   setlocal noswapfile
