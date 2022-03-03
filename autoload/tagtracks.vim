@@ -8,9 +8,9 @@ function tagtracks#FormatTagItem(index, item) abort
   " entry's FROM expression will not be displayed. This limitation is present
   " in the native `:tags' command as well.
   const text_list = getbufline(a:item.from[0], a:item.from[1])
-  const text = empty(text_list) ? '' : text_list[0]
+  const text = empty(text_list) ? '' : trim(text_list[0])
 
-  const original_loc = printf('%s:%d %s',
+  const original_loc = printf('%s:%d  %s',
         \ bufname(a:item.from[0]),
         \ a:item.from[1],
         \ text)
