@@ -83,7 +83,10 @@ function tagtracks#StartTagTracks()
   endif
   " window id whose tagstack we want to display
   const tagtracks_id = win_getid()
-  new
+
+  " make HUD 1/4 the height of current window instead of the default 1/2
+  const win_height = winheight(0) / 4
+  execute win_height.'new'
   setlocal nonumber
   setlocal nowrap
   setlocal buftype=nofile
