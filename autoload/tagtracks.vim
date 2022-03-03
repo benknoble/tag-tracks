@@ -23,17 +23,17 @@ endfunction
 function tagtracks#FormatTagStack(tags) abort
   const lines = mapnew(a:tags.items, funcref('tagtracks#FormatTagItem'))
 
-  const item_length = max([strlen('Item')] + mapnew(lines, {_, v -> strlen(v.item)})) + 1
-  const tag_length = max([strlen('Tag')] + mapnew(lines, {_, v -> strlen(v.tag)})) + 1
-  const match_length = max([strlen('Match')] + mapnew(lines, {_, v -> strlen(v.match)})) + 1
+  const item_length = max([strlen('Item')] + mapnew(lines, {_, v -> strlen(v.item)})) + 2
+  const tag_length = max([strlen('Tag')] + mapnew(lines, {_, v -> strlen(v.tag)})) + 2
+  const match_length = max([strlen('Match')] + mapnew(lines, {_, v -> strlen(v.match)})) + 2
 
-  return [  ' ' .
+  return [  '  ' .
         \   'Item' . repeat(' ', item_length - strlen('Item')) .
         \   'Tag' . repeat(' ', tag_length - strlen('Tag')) .
         \   'Match' . repeat(' ', match_length - strlen('Match')) .
         \   'Origin']
         \ + mapnew(lines, {k, v -> printf('%s%s%s%s%s',
-        \   (k is# a:tags.curidx - 1) ? '>' : ' ',
+        \   (k is# a:tags.curidx - 1) ? '> ' : '  ',
         \   v.item . repeat(' ', item_length - strlen(v.item)),
         \   v.tag . repeat(' ', tag_length - strlen(v.tag)),
         \   v.match . repeat(' ', match_length - strlen(v.match)),
