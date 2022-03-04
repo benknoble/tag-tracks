@@ -8,9 +8,9 @@ function tagtracks#FormatTagItem(index, item) abort
   " entry's FROM expression will not be displayed. This limitation is present
   " in the native `:tags' command as well.
   const text_list = getbufline(a:item.from[0], a:item.from[1])
-  const text = empty(text_list) ? '' : text_list[0]
+  const text = empty(text_list) ? '' : trim(text_list[0])
 
-  const original_loc = printf('%s:%d %s',
+  const original_loc = printf('%s:%d  %s',
         \ bufname(a:item.from[0]),
         \ a:item.from[1],
         \ text)
@@ -23,17 +23,17 @@ endfunction
 function tagtracks#FormatTagStack(tags) abort
   const lines = mapnew(a:tags.items, funcref('tagtracks#FormatTagItem'))
 
-  const item_length = max([strlen('Item')] + mapnew(lines, {_, v -> strlen(v.item)})) + 1
-  const tag_length = max([strlen('Tag')] + mapnew(lines, {_, v -> strlen(v.tag)})) + 1
-  const match_length = max([strlen('Match')] + mapnew(lines, {_, v -> strlen(v.match)})) + 1
+  const item_length = max([strlen('Item')] + mapnew(lines, {_, v -> strlen(v.item)})) + 2
+  const tag_length = max([strlen('Tag')] + mapnew(lines, {_, v -> strlen(v.tag)})) + 2
+  const match_length = max([strlen('Match')] + mapnew(lines, {_, v -> strlen(v.match)})) + 2
 
-  return [  ' ' .
+  return [  '  ' .
         \   'Item' . repeat(' ', item_length - strlen('Item')) .
         \   'Tag' . repeat(' ', tag_length - strlen('Tag')) .
         \   'Match' . repeat(' ', match_length - strlen('Match')) .
         \   'Origin']
         \ + mapnew(lines, {k, v -> printf('%s%s%s%s%s',
-        \   (k is# a:tags.curidx - 1) ? '>' : ' ',
+        \   (k is# a:tags.curidx - 1) ? '> ' : '  ',
         \   v.item . repeat(' ', item_length - strlen(v.item)),
         \   v.tag . repeat(' ', tag_length - strlen(v.tag)),
         \   v.match . repeat(' ', match_length - strlen(v.match)),
@@ -83,12 +83,19 @@ function tagtracks#StartTagTracks()
   endif
   " window id whose tagstack we want to display
   const tagtracks_id = win_getid()
-  new
+
+  " make HUD 1/4 the height of current window instead of the default 1/2
+  const win_height = winheight(0) / 4
+  execute win_height.'new'
   setlocal nonumber
+  setlocal nowrap
   setlocal buftype=nofile
   setlocal bufhidden=wipe
   setlocal noswapfile
   setlocal nobuflisted
+  " set colors in display to mirror :tags
+  syntax match Title /\vItem\s+Tag\s+Match\s+Origin/
+  syntax match Directory /\v\d+\s+\S+\s+\d+\s+\S+:\d+\s+\zs.*$/
   file TagTracks
   " window id where display will live
   const display_id = win_getid()
