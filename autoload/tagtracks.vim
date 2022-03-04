@@ -57,6 +57,14 @@ function tagtracks#DisplayTagTracks(display_id, tagtracks_id)
 
   " get the tagstack
   const tagstack = gettagstack(a:tagtracks_id)
+
+  " don't update if tag stack has not changed
+  if tagstack == w:tagtracks_info.last_tagstack
+    return
+  else
+    let w:tagtracks_info.last_tagstack = tagstack
+  endif
+
   " format it
   const tagsitems = tagtracks#FormatTagStack(tagstack)
 
@@ -87,6 +95,7 @@ function tagtracks#StartTagTracks()
 
   wincmd p
   let w:tagtracks_info = #{
+        \ last_tagstack: {},
         \ display_id: display_id,
         \ tagtracks_id: tagtracks_id
         \ }
