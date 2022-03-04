@@ -93,6 +93,9 @@ function tagtracks#StartTagTracks()
   setlocal bufhidden=wipe
   setlocal noswapfile
   setlocal nobuflisted
+  " set colors in display to mirror :tags
+  syntax match Title /\vItem\s+Tag\s+Match\s+Origin/
+  syntax match Directory /\v\d+\s+\S+\s+\d+\s+\S+:\d+\s+\zs.*$/
   file TagTracks
   " window id where display will live
   const display_id = win_getid()
