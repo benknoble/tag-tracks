@@ -42,18 +42,29 @@ function tagtracks#FormatTagStack(tags) abort
 endfunction
 
 function tagtracks#DisplayTagTracks(display_id, tagtracks_id)
-  " delete SafeState autocommand
-  silent! execute 'autocmd! tag_tracks'.a:tagtracks_id 'SafeState *'
-
+  " bail if either window was closed
   const [display_tabnr, display_winnr] = win_id2tabwin(a:display_id)
-  " don't update when not in the right tab
-  " or when the display cannot be found
-  if tabpagenr() isnot# display_tabnr || display_winnr is# 0
+  const [tagtracks_tabnr, tagtracks_winnr] = win_id2tabwin(a:tagtracks_id)
+  if display_winnr is# 0 || tagtracks_winnr is# 0
+    call tagtracks#StopTagTracks(a:display_id)
+    return
+  endif
+
+  " don't update if tag tracks window is not current window
+  if win_getid() != a:tagtracks_id
     return
   endif
 
   " get the tagstack
   const tagstack = gettagstack(a:tagtracks_id)
+
+  " don't update if tag stack has not changed
+  if tagstack == w:tagtracks_info.last_tagstack
+    return
+  else
+    let w:tagtracks_info.last_tagstack = tagstack
+  endif
+
   " format it
   const tagsitems = tagtracks#FormatTagStack(tagstack)
 
@@ -64,13 +75,6 @@ function tagtracks#DisplayTagTracks(display_id, tagtracks_id)
   silent call deletebufline(display_bufnr, 1, '$')
   " add the new content, like put =tagsitems | 1delete
   call setbufline(display_bufnr, 1, tagsitems)
-endfunction
-
-function tagtracks#DisplayTagTracksSafely(display_id, tagtracks_id, timer) abort
-  execute 'augroup tag_tracks'.a:tagtracks_id
-    autocmd!
-    execute "autocmd SafeState * if mode() is# 'n' | call tagtracks#DisplayTagTracks(".a:display_id.", ".a:tagtracks_id.") | endif"
-  augroup end
 endfunction
 
 function tagtracks#StartTagTracks()
@@ -90,23 +94,37 @@ function tagtracks#StartTagTracks()
   const display_id = win_getid()
 
   wincmd p
-  " trigger first display manually so we don't wait for too long
-  call tagtracks#DisplayTagTracks(display_id, tagtracks_id)
   let w:tagtracks_info = #{
-        \ timer: timer_start(500, function('tagtracks#DisplayTagTracksSafely', [display_id, tagtracks_id]), #{repeat: -1}),
+        \ last_tagstack: {},
         \ display_id: display_id,
         \ tagtracks_id: tagtracks_id
         \ }
+
+  " update HUD when safe
+  execute 'augroup tag_tracks'.display_id
+    execute "autocmd SafeState * if mode() is# 'n' | call tagtracks#DisplayTagTracks(".display_id.", ".tagtracks_id.") | endif"
+  augroup end
 endfunction
 
-function tagtracks#StopTagTracks()
+" This function is called in only three cases. When the user:
+"   1. closes the HUD.
+"   2. closes the window being tracked.
+"   3. issues the :TagTracks command in a window being tracked.
+" For a given HUD, only one case ever occurs.
+function tagtracks#StopTagTracks(display_id = v:none)
+  const display_id = a:display_id ?? w:tagtracks_info.display_id
+
+  " close window: this is conditional since the user could have manually
+  " closed the HUD.
+  const win_nr_to_close = win_id2win(display_id)
+  if win_nr_to_close isnot# 0
+    execute win_nr_to_close 'quit'
+  endif
+
+  " cleanup autocmd and variable: unlet of w:tagtracks_info is conditional
+  " since the user could have manually closed the window being tracked.
+  execute 'autocmd! tag_tracks'.display_id
   if exists('w:tagtracks_info')
-    call timer_stop(w:tagtracks_info.timer)
-    const win_nr_to_close = win_id2win(w:tagtracks_info.display_id)
-    if win_nr_to_close isnot# 0
-      execute win_nr_to_close 'close'
-    endif
-    silent! execute 'autocmd! tag_tracks'.w:tagtracks_info.tagtracks_id 'SafeState *'
     unlet w:tagtracks_info
   endif
 endfunction
