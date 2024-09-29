@@ -118,7 +118,7 @@ endfunction
 "   2. closes the window being tracked.
 "   3. issues the :TagTracks command in a window being tracked.
 " For a given HUD, only one case ever occurs.
-function tagtracks#StopTagTracks(display_id = v:none)
+function tagtracks#StopTagTracks(display_id = v:null)
   const display_id = a:display_id ?? w:tagtracks_info.display_id
 
   " close window: this is conditional since the user could have manually
